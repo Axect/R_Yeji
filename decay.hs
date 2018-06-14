@@ -144,24 +144,24 @@ gpTot = simulApply3 [gpTot2B, gpTot3B, gpTot4B]
 
 main = do
   let
-    v           = vec [1 .. 1e6]
-    vTot        = gpTot 1 <$> v
-    vpqqg       = gpqqg 1 <$> v
-    vpFF        = gpFF 1 <$> v
-    vpWW        = gpWW 1 <$> v
-    vpZZ        = gpZZ 1 <$> v
-    vphh        = gphh 1 <$> v
-    vpFFW       = gpFFW 1 <$> v
-    vpFFZ       = gpFFZ 1 <$> v
-    vpWWhh      = gpWWhh 1 <$> v
-    vpZZhh      = gpZZhh 1 <$> v
-    brpqqg      = toList $ vpqqg / vTot
-    brpFF       = toList $ vpFF / vTot
-    brpWWZZ     = toList $ (vpZZ + vpWW) / vTot
-    brphh       = toList $ vphh / vTot
-    brpFFWFFZ   = toList $ (vpFFW + vpFFZ) / vTot
-    brpWWhhZZhh = toList $ (vpWWhh + vpZZhh) / vTot
-    df          = DataFrame
+    !v           = vec [1 .. 1e6]
+    !vTot        = gpTot 1 <$> v
+    !vpqqg       = gpqqg 1 <$> v
+    !vpFF        = gpFF 1 <$> v
+    !vpWW        = gpWW 1 <$> v
+    !vpZZ        = gpZZ 1 <$> v
+    !vphh        = gphh 1 <$> v
+    !vpFFW       = gpFFW 1 <$> v
+    !vpFFZ       = gpFFZ 1 <$> v
+    !vpWWhh      = gpWWhh 1 <$> v
+    !vpZZhh      = gpZZhh 1 <$> v
+    !brpqqg      = toList $ vpqqg / vTot
+    !brpFF       = toList $ vpFF / vTot
+    !brpWWZZ     = toList $ (vpZZ + vpWW) / vTot
+    !brphh       = toList $ vphh / vTot
+    !brpFFWFFZ   = toList $ (vpFFW + vpFFZ) / vTot
+    !brpWWhhZZhh = toList $ (vpWWhh + vpZZhh) / vTot
+    !df          = DataFrame
       { header = [ "Total"
                  , "brpqqg"
                  , "brpFF"
