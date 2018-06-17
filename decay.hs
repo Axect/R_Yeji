@@ -42,11 +42,35 @@ gAZ tL3 _ = g2 / (2 * cw) * tL3
 factor :: Double -> Double -> Double
 factor xi num = xi ^ 2 / (num * pi * mpl ^ 2)
 
-simulApply2 :: [Double -> Double] -> Double -> Double
-simulApply2 xs d = foldr (\x -> (+) (x d)) 0 xs
+-- Prepare Iteration
+type Func = Double -> Double
 
-simulApply3 :: [Double -> Double -> Double] -> Double -> Double -> Double
-simulApply3 xs d1 d2 = foldr (\x -> (+) (x d1 d2)) 0 xs
+data Fermions = Fermions { fu :: Func
+                         , fd :: Func
+                         , fc :: Func
+                         , fs :: Func
+                         , ft :: Func
+                         , fb :: Func}
+
+simulExecF :: Fermions -> [Double] -> [Double]
+simulExecF ferms xs = gs
+ where
+  gs = map (apl ferms) xs
+  apl hs x =
+    let us = fu hs x
+        ds = fd hs x
+        cs = fc hs x
+        ss = fs hs x
+        ts = ft hs x
+        bs = fb hs x
+    in  us
+        `seq` ds
+        `seq` cs
+        `seq` ss
+        `seq` ts
+        `seq` bs
+        `seq` (us + ds + cs + ss + ts + bs)
+
 ------------------------------------------
 -- Two Body
 ------------------------------------------
@@ -54,16 +78,43 @@ simulApply3 xs d1 d2 = foldr (\x -> (+) (x d1 d2)) 0 xs
 -- Decay Width
 gphh :: Double -> Double -> Double
 gphh xi mPhi
-  | mPhi <= 2 * mH = 0
-  | otherwise = factor xi 32 * mPhi ^ 3 * (1 + 2 * xH) ^ 2 * sqrt (1 - 4 * xH)
-  where xH = (mH / mPhi) ^ 2
+  | mPhi <= 2 * mH
+  = 0
+  | otherwise
+  = xH
+    `seq` fac
+    `seq` former
+    `seq` latter
+    `seq` fac
+    *     mPhi
+    ^     3
+    *     former
+    *     latter
+ where
+  xH     = (mH / mPhi) ^ 2
+  fac    = factor xi 32
+  former = (1 + 2 * xH) ^ 2
+  latter = sqrt (1 - 4 * xH)
 
 gpZZ :: Double -> Double -> Double
 gpZZ xi mPhi
-  | mPhi <= 2 * mZ = 0
-  | otherwise = factor xi 32 * mPhi ^ 3 * (1 - 4 * xZ + 12 * xZ ^ 2) * sqrt
-    (1 - 4 * xZ)
-  where xZ = (mZ / mPhi) ^ 2
+  | mPhi <= 2 * mZ
+  = 0
+  | otherwise
+  = xZ
+    `seq` fac
+    `seq` former
+    `seq` latter
+    `seq` fac
+    *     mPhi
+    ^     3
+    *     former
+    *     latter
+ where
+  xZ     = (mZ / mPhi) ^ 2
+  fac    = factor xi 32
+  former = 1 - 4 * xZ + 12 * xZ ^ 2
+  latter = sqrt (1 - 4 * xZ)
 
 gpWW :: Double -> Double -> Double
 gpWW xi mPhi
