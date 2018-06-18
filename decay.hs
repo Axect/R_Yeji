@@ -2,6 +2,7 @@ import           HNum.Vector                    ( matrix )
 import           HNum.CSV
 import           Data.List
 import           Control.Parallel
+import           Control.Concurrent.ParallelIO
 
 -- Consts
 mH = 125.09
@@ -337,8 +338,9 @@ brpWWhhZZhh :: Xi -> [Double] -> [Double] -> [Double]
 brpWWhhZZhh xi tots mPhis =
   let a = gpTot4B' xi mPhis in a `pseq` zipWith (/) a tots
 
-main =
-  let v            = [1 .. 1e+6]
+main
+  = let
+      v            = [1 .. 1e+6]
       tots         = gpTot 1 [1 .. 1e+6]
       brpqqg'      = map show $ brpqqg 1 tots v
       brpFF'       = map show $ brpFF 1 tots v
@@ -346,7 +348,8 @@ main =
       brpWWZZ'     = map show $ brpWWZZ 1 tots v
       brpFFWFFZ'   = map show $ brpFFWFFZ 1 tots v
       brpWWhhZZhh' = map show $ brpWWhhZZhh 1 tots v
-  in  v
+    in
+      v
       `pseq` tots
       `pseq` brpqqg'
       `par`  brpFF'
@@ -355,12 +358,16 @@ main =
       `par`  brpFFWFFZ'
       `par`  brpWWhhZZhh'
       `pseq` do
-               writeFile "CSV/total.csv" (intercalate "\n" (map show tots))
-               writeFile "CSV/brpqqg.csv"      (intercalate "\n" brpqqg')
-               writeFile "CSV/brpFF.csv"       (intercalate "\n" brpFF')
-               writeFile "CSV/brphh.csv"       (intercalate "\n" brphh')
-               writeFile "CSV/brpWWZZ.csv"     (intercalate "\n" brpWWZZ')
-               writeFile "CSV/brpFFWFFZ.csv"   (intercalate "\n" brpFFWFFZ')
-               writeFile "CSV/brpWWhhZZhh.csv" (intercalate "\n" brpWWhhZZhh')
+               parallel_
+                 [ writeFile "CSV/total.csv" (intercalate "\n" (map show tots))
+                 , writeFile "CSV/brpqqg.csv"    (intercalate "\n" brpqqg')
+                 , writeFile "CSV/brpFF.csv"     (intercalate "\n" brpFF')
+                 , writeFile "CSV/brphh.csv"     (intercalate "\n" brphh')
+                 , writeFile "CSV/brpWWZZ.csv"   (intercalate "\n" brpWWZZ')
+                 , writeFile "CSV/brpFFWFFZ.csv" (intercalate "\n" brpFFWFFZ')
+                 , writeFile "CSV/brpWWhhZZhh.csv"
+                             (intercalate "\n" brpWWhhZZhh')
+                 ]
+               stopGlobalPool
 
 
